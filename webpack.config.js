@@ -1,7 +1,8 @@
 //const webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
-    entry: './app/src/js/main.js',
-    output: {
+    entry:  './app/src/js/main.js',
+        output: {
         path: './app/dist',
         filename: 'index.js'
     },
@@ -9,7 +10,6 @@ module.exports = {
         inline: true,
         port: 3333
     },
-
     /* For production
      plugins: [
      new webpack.optimize.DedupePlugin(),
@@ -32,8 +32,13 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loaders: ["style", "css", "sass"]
+                loader: ExtractTextPlugin.extract('css!sass')
             }
         ]
-    }
+    },
+    plugins: [
+        new ExtractTextPlugin('style.css', {
+            allChunks: true
+        })
+    ]
 };
