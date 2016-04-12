@@ -1,8 +1,8 @@
 //const webpack = require('webpack');
 module.exports = {
-    entry: './main.js',
+    entry: './src/main.js',
     output: {
-        path: './',
+        path: './dist',
         filename: 'index.js'
     },
     devServer: {
