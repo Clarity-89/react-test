@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import users from './data-generator'
 require('../scss/style.scss');
 
 class App extends React.Component {
     constructor() {
         super();
         this.update = this.update.bind(this);
+        this.state = {data: users};
     }
 
     update() {
@@ -16,10 +18,21 @@ class App extends React.Component {
     }
 
     render() {
-        return (<button onClick={this.update}>{this.props.val}</button>);
+        let rows = this.state.data.map(person => {
+            return <PersonRow key={person.id} data={person}/>
+        });
+        return (<table>
+            <tbody>{rows}</tbody>
+        </table>);
     }
 }
 
-App.defaultProps = {val: 0};
+const PersonRow = (props) => {
+    return (<tr>
+        <td>{props.data.name}</td>
+        <td>{props.data.age}</td>
+        <td>{props.data.gender}</td>
+    </tr>)
+};
 
 export default App
