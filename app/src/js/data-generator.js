@@ -16,7 +16,7 @@ function gender(name) {
 
 /* Returns a random name created by combining first and last names from the lists */
 function randomName() {
-    var firstNames = ['aaron', 'adam', 'bill', 'bob', 'joe', 'tony', 'ted', 'anna', 'barbara', 'liza', 'maria',
+    const firstNames = ['aaron', 'adam', 'bill', 'bob', 'joe', 'tony', 'ted', 'anna', 'barbara', 'liza', 'maria',
             'sanna', 'samira', 'tereza'],
         lastNames = ['andrews', 'armstrong', 'baker', 'banks', 'barnes', 'castillo', 'castro', 'fleming', 'grant',
             'hudson', 'larson', 'murphy', 'reynolds', 'wayne'],
@@ -29,14 +29,12 @@ function randomName() {
 function createData() {
     var users = [];
 
-    for (var i = 0; i < 100; i++) {
-        var user = {};
+    for (let i = 0; i < 100; i++) {
+        let user = {};
         user.id = String(i);
         user.name = utils.formatName(randomName());
         user.age = randomRange(18, 100);
-        var alreadyExists = users.filter(function (el) {
-            return el.name === user.name;
-        });
+        let alreadyExists = users.filter(el => el.name === user.name);
         if (alreadyExists.length) {
             user.name = '';
             user.name = utils.formatName(randomName());
