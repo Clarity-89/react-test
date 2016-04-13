@@ -21,7 +21,7 @@ class App extends React.Component {
         let rows = this.state.data.map(person => {
             return <PersonRow key={person.id} data={person}/>
         });
-        return (<table>
+        return (<table className="ui celled table">
             <tbody>{rows}</tbody>
         </table>);
     }
