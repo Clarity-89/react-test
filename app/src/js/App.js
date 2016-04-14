@@ -22,10 +22,21 @@ class App extends React.Component {
             return <PersonRow key={person.id} data={person}/>
         });
         return (<table className="ui celled table">
+            <Header/>
             <tbody>{rows}</tbody>
         </table>);
     }
 }
+
+const Header = () => {
+    return (<thead>
+    <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+    </tr>
+    </thead>)
+};
 
 const PersonRow = (props) => {
     return (<tr>
