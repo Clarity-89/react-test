@@ -1,21 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ReactPaginate from 'react-paginate';
 import users from './data-generator'
 require('../scss/style.scss');
 
 class App extends React.Component {
     constructor() {
         super();
-        //this.update = this.update.bind(this);
-        //this.handlePageClick = this.handlePageClick.bind(this);
-        this.state = {data: users, offset: 0};
+        this.updatePage = this.updatePage.bind(this);
+        this.state = {
+            data: users,
+            currentPage: 0,
+            pageSize: 20
+        };
+    }
+
+    updatePage(num) {
     }
 
     render() {
         let rows = this.state.data.map(person => {
             return <PersonRow key={person.id} data={person}/>
-        });
+        }).slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
+        let indents = [];
+        for (var i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
+            indents.push(<a className="item" key={i} onClick={this.updatePage(i)}>{i + 1}</a>);
+        }
         return (<table className="ui celled table">
             <Header/>
             <tbody>{rows}</tbody>
@@ -26,10 +35,7 @@ class App extends React.Component {
                         <a className="icon item">
                             <i className="left chevron icon"></i>
                         </a>
-                        <a className="item">1</a>
-                        <a className="item">2</a>
-                        <a className="item">3</a>
-                        <a className="item">4</a>
+                        {indents}
                         <a className="icon item">
                             <i className="right chevron icon"></i>
                         </a>
