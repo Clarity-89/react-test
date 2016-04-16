@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import users from './data-generator'
 require('../scss/style.scss');
 
@@ -8,21 +7,25 @@ class App extends React.Component {
         super();
         this.updatePage = this.updatePage.bind(this);
         this.state = {
-            data: users,
+            users: users,
             currentPage: 0,
             pageSize: 20
         };
+        this.state.data = users.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
     }
 
     updatePage(num) {
+        this.setState({
+            data: users.slice(num * this.state.pageSize, (num + 1) * this.state.pageSize)
+        })
     }
 
     render() {
         let rows = this.state.data.map(person => {
             return <PersonRow key={person.id} data={person}/>
-        }).slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
+        });
         let indents = [];
-        for (var i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
+        for (var i = 0; i < Math.ceil(this.state.users.length / this.state.pageSize); i++) {
             indents.push(<a className="item" key={i} onClick={this.updatePage(i)}>{i + 1}</a>);
         }
         return (<table className="ui celled table">
