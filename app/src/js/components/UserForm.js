@@ -17,11 +17,18 @@ class Form extends React.Component {
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
-
                     </div>
-                    <div className="six wide field">
+                    <div className="three wide field">
                         <label>Age</label>
-                        <input type="number" name="age" placeholder="Age"/>
+                        <input type="number" name="age" min="13" max="100" placeholder="Age"/>
+                    </div>
+                    <div className="three wide field">
+                        <button className="ui vertical animated button" id="add-user">
+                            <div className="hidden content">Add user</div>
+                            <div className="visible content">
+                                <i className="add user icon"></i>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </form>
