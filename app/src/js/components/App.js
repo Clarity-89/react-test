@@ -4,8 +4,8 @@ import Form from './UserForm'
 require('../../scss/style.scss');
 
 class App extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.updatePage = this.updatePage.bind(this);
         this.getData = this.getData.bind(this);
         this.state = {
@@ -13,18 +13,7 @@ class App extends React.Component {
             data: users,
             pageSize: 20
         };
-        /*this.props = {
-         users: users,
-         pageSize: 20
-         }*/
     }
-
-    /* componentWillMount() {
-     this.setState({
-     data: users.slice(this.state.currentPage * this.props.pageSize, (this.state.currentPage + 1) * this.props.pageSize)
-     })
-     }*/
-
     updatePage(num) {
         this.setState({
             currentPage: num
@@ -40,8 +29,8 @@ class App extends React.Component {
             return <PersonRow key={person.id} data={person}/>
         });
         let indents = [];
-        for (var i = 0; i < Math.ceil(100 / 20); i++) {
-            indents.push(<a className="item" onClick={this.updatePage(i)} key={i}>{i + 1}</a>);
+        for (let i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
+            indents.push(<a className="item" onClick={() => this.updatePage(i)} key={i}>{i + 1}</a>);
         }
         return (<div>
             <Form />
