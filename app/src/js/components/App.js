@@ -6,15 +6,17 @@ require('../../scss/style.scss');
 class App extends React.Component {
     constructor() {
         super();
-        //this.updatePage = this.updatePage.bind(this);
+        this.updatePage = this.updatePage.bind(this);
+        this.getData = this.getData.bind(this);
         this.state = {
             currentPage: 0,
-            data: users
+            data: users,
+            pageSize: 20
         };
         /*this.props = {
-            users: users,
-            pageSize: 20
-        }*/
+         users: users,
+         pageSize: 20
+         }*/
     }
 
     /* componentWillMount() {
@@ -23,19 +25,23 @@ class App extends React.Component {
      })
      }*/
 
-    /* updatePage(num) {
-     this.setState({
-     data: users.slice(num * this.props.pageSize, (num + 1) * this.props.pageSize)
-     })
-     }*/
+    updatePage(num) {
+        this.setState({
+            currentPage: num
+        })
+    }
+
+    getData() {
+        return this.state.data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize)
+    }
 
     render() {
-        let rows = this.state.data.map(person => {
+        let rows = this.getData().map(person => {
             return <PersonRow key={person.id} data={person}/>
-        }).slice(0, 20);
+        });
         let indents = [];
         for (var i = 0; i < Math.ceil(100 / 20); i++) {
-            indents.push(<a className="item" key={i}>{i + 1}</a>);
+            indents.push(<a className="item" onClick={this.updatePage(i)} key={i}>{i + 1}</a>);
         }
         return (<div>
             <Form />
