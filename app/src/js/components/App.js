@@ -30,6 +30,22 @@ class App extends React.Component {
         return this.state.data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize)
     }
 
+    pageBack() {
+        if (this.state.currentPage - 1 >= 0) {
+            this.setState({
+                currentPage: this.state.currentPage - 1
+            })
+        }
+    }
+
+    pageForward() {
+        if (this.state.currentPage + 1 < this.state.data.length / this.state.pageSize) {
+            this.setState({
+                currentPage: this.state.currentPage + 1
+            })
+        }
+    }
+
     render() {
         let rows = this.getData().map(person => {
             return <PersonRow key={person.id} data={person}/>
@@ -47,11 +63,11 @@ class App extends React.Component {
                 <tr>
                     <th colSpan="3">
                         <div className="ui right floated pagination menu">
-                            <a className="icon item">
+                            <a className="icon item" onClick={this.pageBack.bind(this)}>
                                 <i className="left chevron icon"></i>
                             </a>
                             {indents}
-                            <a className="icon item">
+                            <a className="icon item" onClick={this.pageForward.bind(this)}>
                                 <i className="right chevron icon"></i>
                             </a>
                         </div>
