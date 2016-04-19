@@ -1,0 +1,11 @@
+html, body {
+  height: 100%; }
+
+.item:hover, .active {
+  background-color: #949494 !important; }
+
+#form {
+  margin: 5% auto; }
+
+#add-user {
+  margin-top: 22.5px; }
