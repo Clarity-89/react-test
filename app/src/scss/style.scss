@@ -2,8 +2,8 @@ html, body {
   height: 100%;
 }
 
-.item:hover {
-  background-color: grey !important;
+.item:hover, .active {
+  background-color: #949494 !important;
 }
 
 #form {

@@ -8,16 +8,22 @@ class App extends React.Component {
         super(props);
         this.updatePage = this.updatePage.bind(this);
         this.getData = this.getData.bind(this);
+        this.isActive = this.isActive.bind(this);
         this.state = {
             currentPage: 0,
             data: users,
             pageSize: 20
         };
     }
+
     updatePage(num) {
         this.setState({
             currentPage: num
         })
+    }
+
+    isActive(value) {
+        return 'item ' + (value === this.state.currentPage ? 'active' : '');
     }
 
     getData() {
@@ -30,7 +36,7 @@ class App extends React.Component {
         });
         let indents = [];
         for (let i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
-            indents.push(<a className="item" onClick={() => this.updatePage(i)} key={i}>{i + 1}</a>);
+            indents.push(<a className={this.isActive(i)} onClick={() => this.updatePage(i)} key={i}>{i + 1}</a>);
         }
         return (<div>
             <Form />
