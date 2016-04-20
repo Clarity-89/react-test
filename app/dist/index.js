@@ -19695,7 +19695,7 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	__webpack_require__(163);
+	__webpack_require__(164);
 
 	var App = function (_React$Component) {
 	    _inherits(App, _React$Component);
@@ -19706,6 +19706,7 @@
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
 
 	        _this.updatePage = _this.updatePage.bind(_this);
+	        _this.addPerson = _this.addPerson.bind(_this);
 	        _this.getData = _this.getData.bind(_this);
 	        _this.isActive = _this.isActive.bind(_this);
 	        _this.state = {
@@ -19722,6 +19723,12 @@
 	            this.setState({
 	                currentPage: num
 	            });
+	        }
+	    }, {
+	        key: 'addPerson',
+	        value: function addPerson(person) {
+	            this.state.data.push(person);
+	            this.setState({ data: this.state.data });
 	        }
 	    }, {
 	        key: 'isActive',
@@ -19777,7 +19784,7 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
-	                _react2.default.createElement(_UserForm2.default, null),
+	                _react2.default.createElement(_UserForm2.default, { addPerson: this.addPerson }),
 	                _react2.default.createElement(
 	                    'table',
 	                    { className: 'ui celled table' },
@@ -19965,7 +19972,7 @@
 /* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -19976,6 +19983,10 @@
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _classnames = __webpack_require__(163);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19988,84 +19999,132 @@
 	var Form = function (_React$Component) {
 	    _inherits(Form, _React$Component);
 
-	    function Form() {
+	    function Form(props) {
 	        _classCallCheck(this, Form);
 
-	        return _possibleConstructorReturn(this, Object.getPrototypeOf(Form).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Form).call(this, props));
+
+	        _this.state = {
+	            name: props.name,
+	            gender: '',
+	            age: props.age
+	        };
+	        return _this;
 	    }
 
 	    _createClass(Form, [{
-	        key: "render",
+	        key: 'onNameChange',
+	        value: function onNameChange(e) {
+	            this.setState({
+	                name: e.target.value
+	            });
+	        }
+	    }, {
+	        key: 'onAgeChange',
+	        value: function onAgeChange(e) {
+	            this.setState({
+	                age: e.target.value
+	            });
+	        }
+	    }, {
+	        key: 'onGenderChange',
+	        value: function onGenderChange(e) {
+	            this.setState({
+	                gender: e.target.value
+	            });
+	        }
+	    }, {
+	        key: 'handleSubmit',
+	        value: function handleSubmit(e) {
+	            e.preventDefault();
+	            this.props.addPerson(this.state);
+	            this.setState({ name: '', gender: '', age: '' });
+	        }
+	    }, {
+	        key: 'render',
 	        value: function render() {
+	            var value = this.state.gender;
+	            var classNames = (0, _classnames2.default)('ui', 'fluid', 'search', 'dropdown', {
+	                'placeholder': !value
+	            });
+
 	            return _react2.default.createElement(
-	                "form",
-	                { className: "ui form", id: "form" },
+	                'form',
+	                { className: 'ui form', id: 'form', onSubmit: this.handleSubmit.bind(this) },
 	                _react2.default.createElement(
-	                    "h4",
-	                    { className: "ui dividing header" },
-	                    "New User"
+	                    'h4',
+	                    { className: 'ui dividing header' },
+	                    'New User'
 	                ),
 	                _react2.default.createElement(
-	                    "div",
-	                    { className: "fields" },
+	                    'div',
+	                    { className: 'fields' },
 	                    _react2.default.createElement(
-	                        "div",
-	                        { className: "seven wide field" },
+	                        'div',
+	                        { className: 'seven wide field' },
 	                        _react2.default.createElement(
-	                            "label",
+	                            'label',
 	                            null,
-	                            "Name"
+	                            'Name'
 	                        ),
-	                        _react2.default.createElement("input", { type: "text", name: "name", placeholder: "Name" })
+	                        _react2.default.createElement('input', { type: 'text', name: 'name', placeholder: 'Name', value: this.state.name,
+	                            onChange: this.onNameChange.bind(this) })
 	                    ),
 	                    _react2.default.createElement(
-	                        "div",
-	                        { className: "three wide field" },
+	                        'div',
+	                        { className: 'three wide field' },
 	                        _react2.default.createElement(
-	                            "label",
+	                            'label',
 	                            null,
-	                            "Gender"
+	                            'Gender'
 	                        ),
 	                        _react2.default.createElement(
-	                            "select",
-	                            { className: "ui fluid search dropdown", name: "gender" },
+	                            'select',
+	                            { className: classNames, name: 'gender', value: this.state.gender,
+	                                onChange: this.onGenderChange.bind(this) },
 	                            _react2.default.createElement(
-	                                "option",
-	                                { value: "male" },
-	                                "Male"
+	                                'option',
+	                                { value: '' },
+	                                'Gender'
 	                            ),
 	                            _react2.default.createElement(
-	                                "option",
-	                                { value: "female" },
-	                                "Female"
+	                                'option',
+	                                { value: 'Male' },
+	                                'Male'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: 'Female' },
+	                                'Female'
 	                            )
 	                        )
 	                    ),
 	                    _react2.default.createElement(
-	                        "div",
-	                        { className: "three wide field" },
+	                        'div',
+	                        { className: 'three wide field' },
 	                        _react2.default.createElement(
-	                            "label",
+	                            'label',
 	                            null,
-	                            "Age"
+	                            'Age'
 	                        ),
-	                        _react2.default.createElement("input", { type: "number", name: "age", min: "13", max: "100", placeholder: "Age" })
+	                        _react2.default.createElement('input', { type: 'number', name: 'age', min: '13', max: '100', placeholder: 'Age', value: this.state.age,
+	                            onChange: this.onAgeChange.bind(this) })
 	                    ),
 	                    _react2.default.createElement(
-	                        "div",
-	                        { className: "three wide field" },
+	                        'div',
+	                        { className: 'three wide field' },
 	                        _react2.default.createElement(
-	                            "button",
-	                            { className: "ui vertical animated button", id: "add-user" },
+	                            'button',
+	                            { className: 'ui vertical animated button', id: 'add-user' },
 	                            _react2.default.createElement(
-	                                "div",
-	                                { className: "hidden content" },
-	                                "Add user"
+	                                'div',
+	                                { className: 'hidden content' },
+	                                'Add user'
 	                            ),
 	                            _react2.default.createElement(
-	                                "div",
-	                                { className: "visible content" },
-	                                _react2.default.createElement("i", { className: "add user icon" })
+	                                'div',
+	                                { className: 'visible content' },
+	                                _react2.default.createElement('i', { className: 'add user icon' })
 	                            )
 	                        )
 	                    )
@@ -20081,6 +20140,60 @@
 
 /***/ },
 /* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = [];
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+
+			return classes.join(' ');
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 164 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
