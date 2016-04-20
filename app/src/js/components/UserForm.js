@@ -6,7 +6,7 @@ class Form extends React.Component {
         super(props);
         this.state = {
             name: props.name,
-            gender: props.gender,
+            gender: 'Male',
             age: props.age
         }
     }
@@ -42,19 +42,19 @@ class Form extends React.Component {
                 <div className="fields">
                     <div className="seven wide field">
                         <label>Name</label>
-                        <input type="text" name="name" placeholder="Name" onChange={this.onNameChange.bind(this)}/>
+                        <input type="text" name="name" placeholder="Name" value={this.state.name} onChange={this.onNameChange.bind(this)}/>
                     </div>
                     <div className="three wide field">
                         <label>Gender</label>
-                        <select className="ui fluid search dropdown" name="gender"
+                        <select className="ui fluid search dropdown" name="gender" value={this.state.gender}
                                 onChange={this.onGenderChange.bind(this)}>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
                         </select>
                     </div>
                     <div className="three wide field">
                         <label>Age</label>
-                        <input type="number" name="age" min="13" max="100" placeholder="Age"
+                        <input type="number" name="age" min="13" max="100" placeholder="Age" value={this.state.age}
                                onChange={this.onAgeChange.bind(this)}/>
                     </div>
                     <div className="three wide field">

@@ -7,6 +7,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.updatePage = this.updatePage.bind(this);
+        this.addPerson = this.addPerson.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
         this.state = {
@@ -20,6 +21,11 @@ class App extends React.Component {
         this.setState({
             currentPage: num
         })
+    }
+
+    addPerson(person) {
+        this.state.data.push(person);
+        this.setState({data: this.state.data});
     }
 
     isActive(value) {
@@ -55,7 +61,7 @@ class App extends React.Component {
             indents.push(<a className={this.isActive(i)} onClick={() => this.updatePage(i)} key={i}>{i + 1}</a>);
         }
         return (<div>
-            <Form />
+            <Form addPerson={this.addPerson}/>
             <table className="ui celled table">
                 <Header/>
                 <tbody>{rows}</tbody>
