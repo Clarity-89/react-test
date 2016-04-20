@@ -10,6 +10,7 @@
   "author": "Alex",
   "license": "MIT",
   "dependencies": {
+    "classnames": "^2.2.3",
     "jquery": "^2.2.3",
     "react": "0.14.7",
     "react-addons-create-fragment": "0.14.7",
