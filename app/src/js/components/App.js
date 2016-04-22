@@ -13,7 +13,8 @@ class App extends React.Component {
         this.state = {
             currentPage: 0,
             data: users,
-            pageSize: 20
+            pageSize: 20,
+            sortBy: 'name'
         };
     }
 
@@ -33,7 +34,20 @@ class App extends React.Component {
     }
 
     getData() {
-        return this.state.data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize)
+        let compare = (a, b) => {
+            if (a[this.state.sortBy] < b[this.state.sortBy]) {
+                return -1;
+            } else if (a[this.state.sortBy] > b[this.state.sortBy]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
+
+        return this.state.data
+            .sort(compare)
+            .slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
+
     }
 
     pageBack() {
