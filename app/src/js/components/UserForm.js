@@ -29,6 +29,60 @@ class Form extends React.Component {
         })
     }
 
+    componentDidMount() {
+        $('#form').form({
+            on: 'blur',
+            fields: {
+                name: {
+                    identifier: 'name',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter your name'
+                        },
+                        {
+                            type: 'minLength[3]',
+                            prompt: 'Name should be at least 3 characters long'
+                        }
+                    ]
+                },
+                gender: {
+                    identifier: 'gender',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please select gender'
+                        }
+                    ]
+                },
+                age: {
+                    identifier: 'age',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please provide age'
+                        },
+                        {
+                            type: 'integer[1..100]',
+                            prompt: 'Age must be between 1 and 100'
+                        }
+                    ]
+                }
+            },
+            inline: true,
+            onFailure: this.handleInvalidForm.bind(this),
+            onSuccess: this.handleValidForm.bind(this)
+        });
+    }
+
+    handleInvalidForm(e) {
+        return false;
+    }
+
+    handleValidForm(e) {
+        this.handleSubmit(e)
+    }
+
     handleSubmit(e) {
         e.preventDefault();
         this.props.addPerson(this.state);
@@ -44,7 +98,7 @@ class Form extends React.Component {
             });
 
         return (
-            <form className="ui form" id="form" onSubmit={this.handleSubmit.bind(this)}>
+            <form className="ui form" id="form">
                 <h4 className="ui dividing header">New User</h4>
                 <div className="fields">
                     <div className="seven wide field">

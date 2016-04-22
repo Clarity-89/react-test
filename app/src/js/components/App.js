@@ -8,12 +8,15 @@ class App extends React.Component {
         super(props);
         this.updatePage = this.updatePage.bind(this);
         this.addPerson = this.addPerson.bind(this);
+        this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
         this.state = {
             currentPage: 0,
             data: users,
-            pageSize: 20
+            pageSize: 20,
+            sortBy: '',
+            reversed: false
         };
     }
 
@@ -33,7 +36,21 @@ class App extends React.Component {
     }
 
     getData() {
-        return this.state.data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize)
+        let compare = (a, b) => {
+            if (a[this.state.sortBy] < b[this.state.sortBy]) {
+                return -1;
+            } else if (a[this.state.sortBy] > b[this.state.sortBy]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
+
+        let data = this.state.data.sort(compare);
+        data = this.state.reversed ? data.reverse() : data;
+
+        return data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
+
     }
 
     pageBack() {
@@ -52,7 +69,16 @@ class App extends React.Component {
         }
     }
 
+    setSort(prop) {
+        this.setState({sortBy: prop, reversed: !this.state.reversed})
+    }
+
     render() {
+        let fields = ['Name', 'Age', 'Gender'];
+        let headers = fields.map((field, i)=> {
+            return <Header field={field} setSort={this.setSort} reversed={this.state.reversed}
+                           sortBy={this.state.sortBy} key={i}/>
+        });
         let rows = this.getData().map(person => {
             return <PersonRow key={person.id} data={person}/>
         });
@@ -63,7 +89,9 @@ class App extends React.Component {
         return (<div>
             <Form addPerson={this.addPerson}/>
             <table className="ui celled table">
-                <Header/>
+                <thead>
+                <tr>{headers}</tr>
+                </thead>
                 <tbody>{rows}</tbody>
                 <tfoot>
                 <tr>
@@ -84,14 +112,22 @@ class App extends React.Component {
         </div>);
     }
 }
-const Header = () => {
-    return (<thead>
-    <tr>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Gender</th>
-    </tr>
-    </thead>)
+const Header = (props) => {
+    return (<th><a onClick={(e)=>props.setSort(props.field.toLowerCase())}>{props.field} <Arrow
+        reversed={props.reversed} {...props} /></a>
+    </th>)
+};
+
+const Arrow = (props) => {
+    var el = <span></span>; // initialize el to a node, so there is no error when sortBy is not set
+    if (props.sortBy === props.field.toLowerCase()) {
+        if (props.reversed) {
+            el = <i className="angle double down icon"></i>
+        } else {
+            el = <i className="angle double up icon"></i>
+        }
+    }
+    return el;
 };
 
 const PersonRow = (props) => {
@@ -101,6 +137,5 @@ const PersonRow = (props) => {
         <td>{props.data.gender}</td>
     </tr>)
 };
-
 
 export default App
