@@ -15,7 +15,8 @@ class App extends React.Component {
             currentPage: 0,
             data: users,
             pageSize: 20,
-            sortBy: 'name'
+            sortBy: '',
+            reversed: false
         };
     }
 
@@ -45,9 +46,10 @@ class App extends React.Component {
             }
         };
 
-        return this.state.data
-            .sort(compare)
-            .slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
+        let data = this.state.data.sort(compare);
+        data = this.state.reversed ? data.reverse() : data;
+
+        return data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
 
     }
 
@@ -68,7 +70,7 @@ class App extends React.Component {
     }
 
     setSort(prop) {
-        this.setState({sortBy: prop})
+        this.setState({sortBy: prop, reversed: !this.state.reversed})
     }
 
     render() {
