@@ -8,6 +8,7 @@ class App extends React.Component {
         super(props);
         this.updatePage = this.updatePage.bind(this);
         this.addPerson = this.addPerson.bind(this);
+        this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
         this.state = {
@@ -66,6 +67,10 @@ class App extends React.Component {
         }
     }
 
+    setSort(prop) {
+        this.setState({sortBy: prop})
+    }
+
     render() {
         let rows = this.getData().map(person => {
             return <PersonRow key={person.id} data={person}/>
@@ -77,7 +82,7 @@ class App extends React.Component {
         return (<div>
             <Form addPerson={this.addPerson}/>
             <table className="ui celled table">
-                <Header/>
+                <Header setSort={this.setSort}/>
                 <tbody>{rows}</tbody>
                 <tfoot>
                 <tr>
@@ -98,12 +103,12 @@ class App extends React.Component {
         </div>);
     }
 }
-const Header = () => {
+const Header = (props) => {
     return (<thead>
     <tr>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Gender</th>
+        <th><a onClick={(e)=>props.setSort('name')}>Name</a></th>
+        <th><a onClick={()=>props.setSort('age')}>Age</a></th>
+        <th><a onClick={()=>props.setSort('gender')}>Gender</a></th>
     </tr>
     </thead>)
 };
