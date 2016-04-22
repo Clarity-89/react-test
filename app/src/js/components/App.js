@@ -90,7 +90,7 @@ class App extends React.Component {
             <Form addPerson={this.addPerson}/>
             <table className="ui celled table">
                 <thead>
-                <tr>{headers}</tr>
+                <tr className="seven wide field">{headers}</tr>
                 </thead>
                 <tbody>{rows}</tbody>
                 <tfoot>
@@ -132,9 +132,9 @@ const Arrow = (props) => {
 
 const PersonRow = (props) => {
     return (<tr>
-        <td>{props.data.name}</td>
-        <td>{props.data.age}</td>
-        <td>{props.data.gender}</td>
+        <td className="six wide field">{props.data.name}</td>
+        <td className="two wide field">{props.data.age}</td>
+        <td className="three wide field">{props.data.gender}</td>
     </tr>)
 };
 
