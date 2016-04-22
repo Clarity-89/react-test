@@ -19673,6 +19673,8 @@
 	    value: true
 	});
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(1);
@@ -19707,12 +19709,15 @@
 
 	        _this.updatePage = _this.updatePage.bind(_this);
 	        _this.addPerson = _this.addPerson.bind(_this);
+	        _this.setSort = _this.setSort.bind(_this);
 	        _this.getData = _this.getData.bind(_this);
 	        _this.isActive = _this.isActive.bind(_this);
 	        _this.state = {
 	            currentPage: 0,
 	            data: _dataGenerator2.default,
-	            pageSize: 20
+	            pageSize: 20,
+	            sortBy: '',
+	            reversed: false
 	        };
 	        return _this;
 	    }
@@ -19738,7 +19743,22 @@
 	    }, {
 	        key: 'getData',
 	        value: function getData() {
-	            return this.state.data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
+	            var _this2 = this;
+
+	            var compare = function compare(a, b) {
+	                if (a[_this2.state.sortBy] < b[_this2.state.sortBy]) {
+	                    return -1;
+	                } else if (a[_this2.state.sortBy] > b[_this2.state.sortBy]) {
+	                    return 1;
+	                } else {
+	                    return 0;
+	                }
+	            };
+
+	            var data = this.state.data.sort(compare);
+	            data = this.state.reversed ? data.reverse() : data;
+
+	            return data.slice(this.state.currentPage * this.state.pageSize, (this.state.currentPage + 1) * this.state.pageSize);
 	        }
 	    }, {
 	        key: 'pageBack',
@@ -19759,10 +19779,20 @@
 	            }
 	        }
 	    }, {
+	        key: 'setSort',
+	        value: function setSort(prop) {
+	            this.setState({ sortBy: prop, reversed: !this.state.reversed });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
+	            var _this3 = this;
 
+	            var fields = ['Name', 'Age', 'Gender'];
+	            var headers = fields.map(function (field, i) {
+	                return _react2.default.createElement(Header, { field: field, setSort: _this3.setSort, reversed: _this3.state.reversed,
+	                    sortBy: _this3.state.sortBy, key: i });
+	            });
 	            var rows = this.getData().map(function (person) {
 	                return _react2.default.createElement(PersonRow, { key: person.id, data: person });
 	            });
@@ -19771,8 +19801,8 @@
 	            var _loop = function _loop(i) {
 	                indents.push(_react2.default.createElement(
 	                    'a',
-	                    { className: _this2.isActive(i), onClick: function onClick() {
-	                            return _this2.updatePage(i);
+	                    { className: _this3.isActive(i), onClick: function onClick() {
+	                            return _this3.updatePage(i);
 	                        }, key: i },
 	                    i + 1
 	                ));
@@ -19788,7 +19818,15 @@
 	                _react2.default.createElement(
 	                    'table',
 	                    { className: 'ui celled table' },
-	                    _react2.default.createElement(Header, null),
+	                    _react2.default.createElement(
+	                        'thead',
+	                        null,
+	                        _react2.default.createElement(
+	                            'tr',
+	                            null,
+	                            headers
+	                        )
+	                    ),
 	                    _react2.default.createElement(
 	                        'tbody',
 	                        null,
@@ -19829,30 +19867,33 @@
 	    return App;
 	}(_react2.default.Component);
 
-	var Header = function Header() {
+	var Header = function Header(props) {
 	    return _react2.default.createElement(
-	        'thead',
+	        'th',
 	        null,
 	        _react2.default.createElement(
-	            'tr',
-	            null,
-	            _react2.default.createElement(
-	                'th',
-	                null,
-	                'Name'
-	            ),
-	            _react2.default.createElement(
-	                'th',
-	                null,
-	                'Age'
-	            ),
-	            _react2.default.createElement(
-	                'th',
-	                null,
-	                'Gender'
-	            )
+	            'a',
+	            { onClick: function onClick(e) {
+	                    return props.setSort(props.field.toLowerCase());
+	                } },
+	            props.field,
+	            ' ',
+	            _react2.default.createElement(Arrow, _extends({
+	                reversed: props.reversed }, props))
 	        )
 	    );
+	};
+
+	var Arrow = function Arrow(props) {
+	    var el = _react2.default.createElement('span', null); // initialize el to a node, so there is no error when sortBy is not set
+	    if (props.sortBy === props.field.toLowerCase()) {
+	        if (props.reversed) {
+	            el = _react2.default.createElement('i', { className: 'angle double down icon' });
+	        } else {
+	            el = _react2.default.createElement('i', { className: 'angle double up icon' });
+	        }
+	    }
+	    return el;
 	};
 
 	var PersonRow = function PersonRow(props) {
@@ -20034,6 +20075,55 @@
 	            });
 	        }
 	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            $('#form').form({
+	                on: 'blur',
+	                fields: {
+	                    name: {
+	                        identifier: 'name',
+	                        rules: [{
+	                            type: 'empty',
+	                            prompt: 'Please enter your name'
+	                        }, {
+	                            type: 'minLength[3]',
+	                            prompt: 'Name should be at least 3 characters long'
+	                        }]
+	                    },
+	                    gender: {
+	                        identifier: 'gender',
+	                        rules: [{
+	                            type: 'empty',
+	                            prompt: 'Please select gender'
+	                        }]
+	                    },
+	                    age: {
+	                        identifier: 'age',
+	                        rules: [{
+	                            type: 'empty',
+	                            prompt: 'Please provide age'
+	                        }, {
+	                            type: 'integer[1..100]',
+	                            prompt: 'Age must be between 1 and 100'
+	                        }]
+	                    }
+	                },
+	                inline: true,
+	                onFailure: this.handleInvalidForm.bind(this),
+	                onSuccess: this.handleValidForm.bind(this)
+	            });
+	        }
+	    }, {
+	        key: 'handleInvalidForm',
+	        value: function handleInvalidForm(e) {
+	            return false;
+	        }
+	    }, {
+	        key: 'handleValidForm',
+	        value: function handleValidForm(e) {
+	            this.handleSubmit(e);
+	        }
+	    }, {
 	        key: 'handleSubmit',
 	        value: function handleSubmit(e) {
 	            e.preventDefault();
@@ -20050,7 +20140,7 @@
 
 	            return _react2.default.createElement(
 	                'form',
-	                { className: 'ui form', id: 'form', onSubmit: this.handleSubmit.bind(this) },
+	                { className: 'ui form', id: 'form' },
 	                _react2.default.createElement(
 	                    'h4',
 	                    { className: 'ui dividing header' },
