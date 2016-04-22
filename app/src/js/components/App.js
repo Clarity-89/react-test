@@ -74,6 +74,10 @@ class App extends React.Component {
     }
 
     render() {
+        let fields = ['Name', 'Age', 'Gender'];
+        let headers = fields.map((field, i)=> {
+            return <Header field={field} setSort={this.setSort} reversed={this.state.reversed} key={i}/>
+        });
         let rows = this.getData().map(person => {
             return <PersonRow key={person.id} data={person}/>
         });
@@ -84,7 +88,9 @@ class App extends React.Component {
         return (<div>
             <Form addPerson={this.addPerson}/>
             <table className="ui celled table">
-                <Header setSort={this.setSort}/>
+                <thead>
+                <tr>{headers}</tr>
+                </thead>
                 <tbody>{rows}</tbody>
                 <tfoot>
                 <tr>
@@ -106,13 +112,13 @@ class App extends React.Component {
     }
 }
 const Header = (props) => {
-    return (<thead>
-    <tr>
-        <th><a onClick={(e)=>props.setSort('name')}>Name</a></th>
-        <th><a onClick={()=>props.setSort('age')}>Age</a></th>
-        <th><a onClick={()=>props.setSort('gender')}>Gender</a></th>
-    </tr>
-    </thead>)
+    return (<th><a onClick={(e)=>props.setSort(props.field.toLowerCase())}>{props.field} <Arrow
+        reversed={props.reversed}/></a>
+    </th>)
+};
+
+const Arrow = (props) => {
+    return props.reversed ? <i className="angle double down icon"></i> : <i className="angle double up icon"></i>;
 };
 
 const PersonRow = (props) => {
@@ -122,6 +128,5 @@ const PersonRow = (props) => {
         <td>{props.data.gender}</td>
     </tr>)
 };
-
 
 export default App
