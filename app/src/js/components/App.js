@@ -76,7 +76,8 @@ class App extends React.Component {
     render() {
         let fields = ['Name', 'Age', 'Gender'];
         let headers = fields.map((field, i)=> {
-            return <Header field={field} setSort={this.setSort} reversed={this.state.reversed} key={i}/>
+            return <Header field={field} setSort={this.setSort} reversed={this.state.reversed}
+                           sortBy={this.state.sortBy} key={i}/>
         });
         let rows = this.getData().map(person => {
             return <PersonRow key={person.id} data={person}/>
@@ -113,12 +114,20 @@ class App extends React.Component {
 }
 const Header = (props) => {
     return (<th><a onClick={(e)=>props.setSort(props.field.toLowerCase())}>{props.field} <Arrow
-        reversed={props.reversed}/></a>
+        reversed={props.reversed} {...props} /></a>
     </th>)
 };
 
 const Arrow = (props) => {
-    return props.reversed ? <i className="angle double down icon"></i> : <i className="angle double up icon"></i>;
+    var el = <span></span>; // initialize el to a node, so there is no error when sortBy is not set
+    if (props.sortBy === props.field.toLowerCase()) {
+        if (props.reversed) {
+            el = <i className="angle double down icon"></i>
+        } else {
+            el = <i className="angle double up icon"></i>
+        }
+    }
+    return el;
 };
 
 const PersonRow = (props) => {
