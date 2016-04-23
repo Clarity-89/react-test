@@ -32,8 +32,7 @@ class App extends React.Component {
         person.name = utils.formatName(person.name);
         this.state.data.push(person);
         localStorage.setItem('users', JSON.stringify(this.state.data));
-        //this.setState({data: this.state.data});
-    }
+     }
 
     isActive(value) {
         return 'item ' + (value === this.state.currentPage ? 'active' : '');
