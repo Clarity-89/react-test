@@ -31,7 +31,8 @@ class App extends React.Component {
         // Make sure the name is properly capitalized before saving
         person.name = utils.formatName(person.name);
         this.state.data.push(person);
-        this.setState({data: this.state.data});
+        localStorage.setItem('users', JSON.stringify(this.state.data));
+        //this.setState({data: this.state.data});
     }
 
     isActive(value) {
