@@ -1,6 +1,7 @@
 import React from 'react';
 import users from './../data-generator'
 import Form from './UserForm'
+import utils from './../utils'
 require('../../scss/style.scss');
 
 class App extends React.Component {
@@ -27,6 +28,8 @@ class App extends React.Component {
     }
 
     addPerson(person) {
+        // Make sure the name is properly capitalized before saving
+        person.name = utils.formatName(person.name);
         this.state.data.push(person);
         this.setState({data: this.state.data});
     }
