@@ -32,7 +32,7 @@ class App extends React.Component {
         person.name = utils.formatName(person.name);
         this.state.data.push(person);
         localStorage.setItem('users', JSON.stringify(this.state.data));
-     }
+    }
 
     isActive(value) {
         return 'item ' + (value === this.state.currentPage ? 'active' : '');
@@ -93,7 +93,11 @@ class App extends React.Component {
             <Form addPerson={this.addPerson}/>
             <table className="ui celled table">
                 <thead>
-                <tr className="seven wide field">{headers}</tr>
+                <tr className="seven wide field">
+                    {headers}
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
                 </thead>
                 <tbody>{rows}</tbody>
                 <tfoot>
@@ -135,9 +139,11 @@ const Arrow = (props) => {
 
 const PersonRow = (props) => {
     return (<tr>
-        <td className="six wide field">{props.data.name}</td>
+        <td className="four wide field">{props.data.name}</td>
         <td className="two wide field">{props.data.age}</td>
         <td className="three wide field">{props.data.gender}</td>
+        <td className="one wide field"><i className="write icon"></i></td>
+        <td className="one wide field"><i className="remove icon"></i></td>
     </tr>)
 };
 
