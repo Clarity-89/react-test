@@ -30,12 +30,13 @@ class App extends React.Component {
 
     addPerson(person) {
         let lastId = this.state.data[this.state.data.length - 1].id;
+        let arr = this.state.data.slice();
         // Make sure the name is properly capitalized before saving
         person.name = utils.formatName(person.name);
         // Assign the id of +1 of the id of the last user
-        person.id = lastId + 1;
-        this.state.data.push(person);
-        this.setState({data: this.state.data});
+        person.id = lastId + 1;       
+        arr.push(person);
+        this.setState({data: arr});
         localStorage.setItem('users', JSON.stringify(this.state.data));
     }
 

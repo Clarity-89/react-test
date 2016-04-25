@@ -38,7 +38,7 @@ class Form extends React.Component {
                     rules: [
                         {
                             type: 'empty',
-                            prompt: 'Please enter your name'
+                            prompt: 'Please enter name'
                         },
                         {
                             type: 'minLength[3]',
