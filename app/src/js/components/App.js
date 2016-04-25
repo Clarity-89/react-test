@@ -9,6 +9,7 @@ class App extends React.Component {
         super(props);
         this.updatePage = this.updatePage.bind(this);
         this.addPerson = this.addPerson.bind(this);
+        this.deletePerson = this.deletePerson.bind(this);
         this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
@@ -34,11 +35,21 @@ class App extends React.Component {
         // Assign the id of +1 of the id of the last user
         person.id = lastId + 1;
         this.state.data.push(person);
+        this.setState({data: this.state.data});
         localStorage.setItem('users', JSON.stringify(this.state.data));
     }
 
-    deletePerson(person) {
-        console.log('deleting', person)
+    deletePerson(id) {
+        // Loop over users array to find the one to delete
+        for (let i = 0; i < this.state.data.length; i++) {
+            // If found remove user from array and update the data accordingly
+            if (this.state.data[i].id === id) {
+                this.state.data.splice(i, 1);
+                this.setState({data: this.state.data});
+                localStorage.setItem('users', JSON.stringify(this.state.data));
+                return;
+            }
+        }
     }
 
     isActive(value) {
