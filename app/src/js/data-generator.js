@@ -33,7 +33,7 @@ function createData() {
 
         for (let i = 0; i < 100; i++) {
             let user = {};
-            user.id = String(i);
+            user.id = i;
             user.name = utils.formatName(randomName());
             user.age = randomRange(18, 100);
             let alreadyExists = users.filter(el => el.name === user.name);

@@ -28,10 +28,17 @@ class App extends React.Component {
     }
 
     addPerson(person) {
+        let lastId = this.state.data[this.state.data.length - 1].id;
         // Make sure the name is properly capitalized before saving
         person.name = utils.formatName(person.name);
+        // Assign the id of +1 of the id of the last user
+        person.id = lastId + 1;
         this.state.data.push(person);
         localStorage.setItem('users', JSON.stringify(this.state.data));
+    }
+
+    deletePerson(person) {
+        console.log('deleting', person)
     }
 
     isActive(value) {
@@ -83,7 +90,7 @@ class App extends React.Component {
                            sortBy={this.state.sortBy} key={i}/>
         });
         let rows = this.getData().map(person => {
-            return <PersonRow key={person.id} data={person}/>
+            return <PersonRow key={person.id} data={person} deletePerson={this.deletePerson}/>
         });
         let indents = [];
         for (let i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
@@ -143,7 +150,8 @@ const PersonRow = (props) => {
         <td className="two wide field">{props.data.age}</td>
         <td className="three wide field">{props.data.gender}</td>
         <td className="one wide field"><i className="write icon"></i></td>
-        <td className="one wide field"><i className="remove icon"></i></td>
+        <td className="one wide field"><i onClick={()=>props.deletePerson(props.data.id)} className="remove icon"></i>
+        </td>
     </tr>)
 };
 
