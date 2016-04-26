@@ -10,6 +10,7 @@ class App extends React.Component {
         this.updatePage = this.updatePage.bind(this);
         this.addPerson = this.addPerson.bind(this);
         this.deletePerson = this.deletePerson.bind(this);
+        this.confirmDelete = this.confirmDelete.bind(this);
         this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
@@ -41,18 +42,26 @@ class App extends React.Component {
     }
 
     deletePerson(id) {
-        $('.ui.basic.modal')
-            .modal('show');
         // Loop over users array to find the one to delete
-        /* for (let i = 0; i < this.state.data.length; i++) {
-         // If found remove user from array and update the data accordingly
-         if (this.state.data[i].id === id) {
-         this.state.data.splice(i, 1);
-         this.setState({data: this.state.data});
-         localStorage.setItem('users', JSON.stringify(this.state.data));
-         return;
-         }
-         }*/
+        for (let i = 0; i < this.state.data.length; i++) {
+            // If found remove user from array and update the data accordingly
+            if (this.state.data[i].id === id) {
+                this.state.data.splice(i, 1);
+                this.setState({data: this.state.data});
+                localStorage.setItem('users', JSON.stringify(this.state.data));
+                return;
+            }
+        }
+    }
+
+    confirmDelete(id) {
+        $('.ui.basic.modal')
+            .modal("setting", {
+                onApprove: () => {
+                    this.deletePerson(id);
+                }
+            })
+            .modal('show');
     }
 
     isActive(value) {
@@ -104,7 +113,7 @@ class App extends React.Component {
                            sortBy={this.state.sortBy} key={i}/>
         });
         let rows = this.getData().map(person => {
-            return <PersonRow key={person.id} data={person} deletePerson={this.deletePerson}/>
+            return <PersonRow key={person.id} data={person} confirmDelete={this.confirmDelete}/>
         });
         let indents = [];
         for (let i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
@@ -165,7 +174,7 @@ const PersonRow = (props) => {
         <td className="two wide field">{props.data.age}</td>
         <td className="three wide field">{props.data.gender}</td>
         <td className="one wide field"><i className="write icon"></i></td>
-        <td className="one wide field"><i onClick={()=>props.deletePerson(props.data.id)} className="remove icon"></i>
+        <td className="one wide field"><i onClick={()=>props.confirmDelete(props.data.id)} className="remove icon"></i>
         </td>
     </tr>)
 };
@@ -174,7 +183,7 @@ const Modal = () => {
     return (<div className="ui basic modal">
         <i className="close icon"></i>
         <div className="header">
-           Delete person?
+            Delete person?
         </div>
         <div className="image content">
             <div className="image">
@@ -185,12 +194,12 @@ const Modal = () => {
             </div>
         </div>
         <div className="actions">
-            <div className="two fluid ui inverted buttons">
+            <div className="two fluid ui inverted buttons cancel">
                 <div className="ui red basic inverted button">
                     <i className="remove icon"></i>
                     Cancel
                 </div>
-                <div className="ui green basic inverted button">
+                <div className="ui green basic inverted button ok">
                     <i className="checkmark icon"></i>
                     Delete
                 </div>
