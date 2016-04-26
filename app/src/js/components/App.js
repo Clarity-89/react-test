@@ -34,23 +34,25 @@ class App extends React.Component {
         // Make sure the name is properly capitalized before saving
         person.name = utils.formatName(person.name);
         // Assign the id of +1 of the id of the last user
-        person.id = lastId + 1;       
+        person.id = lastId + 1;
         arr.push(person);
         this.setState({data: arr});
         localStorage.setItem('users', JSON.stringify(this.state.data));
     }
 
     deletePerson(id) {
+        $('.ui.basic.modal')
+            .modal('show');
         // Loop over users array to find the one to delete
-        for (let i = 0; i < this.state.data.length; i++) {
-            // If found remove user from array and update the data accordingly
-            if (this.state.data[i].id === id) {
-                this.state.data.splice(i, 1);
-                this.setState({data: this.state.data});
-                localStorage.setItem('users', JSON.stringify(this.state.data));
-                return;
-            }
-        }
+        /* for (let i = 0; i < this.state.data.length; i++) {
+         // If found remove user from array and update the data accordingly
+         if (this.state.data[i].id === id) {
+         this.state.data.splice(i, 1);
+         this.setState({data: this.state.data});
+         localStorage.setItem('users', JSON.stringify(this.state.data));
+         return;
+         }
+         }*/
     }
 
     isActive(value) {
@@ -109,6 +111,7 @@ class App extends React.Component {
             indents.push(<a className={this.isActive(i)} onClick={() => this.updatePage(i)} key={i}>{i + 1}</a>);
         }
         return (<div>
+            <Modal />
             <Form addPerson={this.addPerson}/>
             <table className="ui celled table">
                 <thead>
@@ -167,4 +170,32 @@ const PersonRow = (props) => {
     </tr>)
 };
 
+const Modal = () => {
+    return (<div className="ui basic modal">
+        <i className="close icon"></i>
+        <div className="header">
+           Delete person?
+        </div>
+        <div className="image content">
+            <div className="image">
+                <i className="archive icon"></i>
+            </div>
+            <div className="description">
+                <p>Are you sure you want to delete this person?</p>
+            </div>
+        </div>
+        <div className="actions">
+            <div className="two fluid ui inverted buttons">
+                <div className="ui red basic inverted button">
+                    <i className="remove icon"></i>
+                    Cancel
+                </div>
+                <div className="ui green basic inverted button">
+                    <i className="checkmark icon"></i>
+                    Delete
+                </div>
+            </div>
+        </div>
+    </div>)
+}
 export default App
