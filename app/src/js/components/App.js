@@ -179,6 +179,19 @@ const PersonRow = (props) => {
     </tr>)
 };
 
+const PersonEditable = (props) => {
+    return (<tr>
+            <td className="four wide field">{props.data.name}</td>
+            <td className="two wide field">{props.data.age}</td>
+            <td className="three wide field">{props.data.gender}</td>
+            <td className="one wide field"><i className="write icon"></i></td>
+            <td className="one wide field"><i onClick={()=>props.confirmDelete(props.data.id)} className="remove icon"></i>
+            </td>
+        </tr>
+
+    )
+};
+
 const Modal = () => {
     return (<div className="ui basic modal">
         <i className="close icon"></i>
