@@ -21,3 +21,8 @@ select.placeholder {
 a:hover, .write, .remove {
   cursor: pointer;
 }
+
+/* Override dropdown padding */
+.ui.selection.dropdown {
+  padding: 0;
+}
