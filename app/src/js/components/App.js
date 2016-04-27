@@ -10,6 +10,7 @@ class App extends React.Component {
         this.updatePage = this.updatePage.bind(this);
         this.addPerson = this.addPerson.bind(this);
         this.deletePerson = this.deletePerson.bind(this);
+        this.editPerson = this.editPerson.bind(this);
         this.confirmDelete = this.confirmDelete.bind(this);
         this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
@@ -19,7 +20,8 @@ class App extends React.Component {
             data: users,
             pageSize: 20,
             sortBy: '',
-            reversed: false
+            reversed: false,
+            editing: {} // store user for editing
         };
     }
 
@@ -106,6 +108,10 @@ class App extends React.Component {
         this.setState({sortBy: prop, reversed: !this.state.reversed})
     }
 
+    editPerson(user) {
+        this.setState({editing: user})
+    }
+
     render() {
         let fields = ['Name', 'Age', 'Gender'];
         let headers = fields.map((field, i)=> {
@@ -113,7 +119,13 @@ class App extends React.Component {
                            sortBy={this.state.sortBy} key={i}/>
         });
         let rows = this.getData().map(person => {
-            return <PersonRow key={person.id} data={person} confirmDelete={this.confirmDelete}/>
+            if (person.id === this.state.editing.id) {
+                return <PersonEditable key={person.id} data={person} confirmDelete={this.confirmDelete}
+                />
+            } else {
+                return <PersonRow key={person.id} data={person} confirmDelete={this.confirmDelete}
+                                  edit={this.editPerson}/>
+            }
         });
         let indents = [];
         for (let i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
@@ -173,7 +185,7 @@ const PersonRow = (props) => {
         <td className="four wide field">{props.data.name}</td>
         <td className="two wide field">{props.data.age}</td>
         <td className="three wide field">{props.data.gender}</td>
-        <td className="one wide field"><i className="write icon"></i></td>
+        <td className="one wide field"><i onClick={()=>props.edit(props.data)} className="write icon"></i></td>
         <td className="one wide field"><i onClick={()=>props.confirmDelete(props.data.id)} className="remove icon"></i>
         </td>
     </tr>)
@@ -181,11 +193,18 @@ const PersonRow = (props) => {
 
 const PersonEditable = (props) => {
     return (<tr>
-            <td className="four wide field">{props.data.name}</td>
-            <td className="two wide field">{props.data.age}</td>
-            <td className="three wide field">{props.data.gender}</td>
-            <td className="one wide field"><i className="write icon"></i></td>
-            <td className="one wide field"><i onClick={()=>props.confirmDelete(props.data.id)} className="remove icon"></i>
+            <td className="four wide field">
+                <input type="text" name="name" placeholder="Name" value={props.data.name}/></td>
+            <td className="two wide field">
+                <input type="number" name="age" min="13" max="100" placeholder="Age" value={props.data.age}/></td>
+            <td className="three wide field">
+                <select name="gender" value={props.data.gender}>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select></td>
+            <td className="one wide field"><i className="save icon"></i></td>
+            <td className="one wide field"><i onClick={()=>props.confirmDelete(props.data.id)}
+                                              className="remove icon"></i>
             </td>
         </tr>
 
