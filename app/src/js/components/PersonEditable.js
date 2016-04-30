@@ -1,4 +1,7 @@
+'use strict';
+
 import React from 'react';
+
 class PersonEditable extends React.Component {
     constructor(props) {
         super(props);

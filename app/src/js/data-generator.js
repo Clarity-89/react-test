@@ -1,3 +1,5 @@
+'use strict';
+
 import utils from './utils';
 
 /* Returns a semi-random number between min and max as an integer */

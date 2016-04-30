@@ -1,3 +1,5 @@
+'use strict';
+
 const utils = {
     // Accepts a name as a string and capitalizes first letters in every word. Returns formatted name as a string
     formatName: function (name) {

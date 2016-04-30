@@ -1,3 +1,5 @@
+'use strict';
+
 import React from 'react';
 import users from './../data-generator'
 import Form from './UserForm'
@@ -163,62 +165,5 @@ class App extends React.Component {
         </div>);
     }
 }
-const Header = (props) => {
-    return (<th><a onClick={(e)=>props.setSort(props.field.toLowerCase())}>{props.field} <Arrow
-        reversed={props.reversed} {...props} /></a>
-    </th>)
-};
 
-const Arrow = (props) => {
-    var el = <span></span>; // initialize el to a node, so there is no error when sortBy is not set
-    if (props.sortBy === props.field.toLowerCase()) {
-        if (props.reversed) {
-            el = <i className="angle double down icon"></i>
-        } else {
-            el = <i className="angle double up icon"></i>
-        }
-    }
-    return el;
-};
-
-const PersonRow = (props) => {
-    return (<tr>
-        <td className="four wide field">{props.data.name}</td>
-        <td className="two wide field">{props.data.age}</td>
-        <td className="three wide field">{props.data.gender}</td>
-        <td className="one wide field"><i onClick={()=>props.edit(props.data)} className="write icon"></i></td>
-        <td className="one wide field"><i onClick={()=>props.confirmDelete(props.data.id)} className="remove icon"></i>
-        </td>
-    </tr>)
-};
-
-
-const Modal = () => {
-    return (<div className="ui basic modal">
-        <i className="close icon"></i>
-        <div className="header">
-            Delete person?
-        </div>
-        <div className="image content">
-            <div className="image">
-                <i className="archive icon"></i>
-            </div>
-            <div className="description">
-                <p>Are you sure you want to delete this person?</p>
-            </div>
-        </div>
-        <div className="actions">
-            <div className="two fluid ui inverted buttons cancel">
-                <div className="ui red basic inverted button">
-                    <i className="remove icon"></i>
-                    Cancel
-                </div>
-                <div className="ui green basic inverted button ok">
-                    <i className="checkmark icon"></i>
-                    Delete
-                </div>
-            </div>
-        </div>
-    </div>)
-}
 export default App
