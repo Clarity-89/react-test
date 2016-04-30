@@ -19669,11 +19669,11 @@
 
 	'use strict';
 
+	// React core
+
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -19681,13 +19681,33 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _dataGenerator = __webpack_require__(160);
+	var _UserForm = __webpack_require__(160);
+
+	var _UserForm2 = _interopRequireDefault(_UserForm);
+
+	var _Header = __webpack_require__(162);
+
+	var _Header2 = _interopRequireDefault(_Header);
+
+	var _Modal = __webpack_require__(164);
+
+	var _Modal2 = _interopRequireDefault(_Modal);
+
+	var _PersonEditable = __webpack_require__(165);
+
+	var _PersonEditable2 = _interopRequireDefault(_PersonEditable);
+
+	var _PersonRow = __webpack_require__(166);
+
+	var _PersonRow2 = _interopRequireDefault(_PersonRow);
+
+	var _dataGenerator = __webpack_require__(167);
 
 	var _dataGenerator2 = _interopRequireDefault(_dataGenerator);
 
-	var _UserForm = __webpack_require__(162);
+	var _utils = __webpack_require__(168);
 
-	var _UserForm2 = _interopRequireDefault(_UserForm);
+	var _utils2 = _interopRequireDefault(_utils);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19697,7 +19717,14 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	__webpack_require__(164);
+	// Components
+
+
+	// Utilities and helpers
+
+
+	// Styles
+	__webpack_require__(169);
 
 	var App = function (_React$Component) {
 	    _inherits(App, _React$Component);
@@ -19709,6 +19736,10 @@
 
 	        _this.updatePage = _this.updatePage.bind(_this);
 	        _this.addPerson = _this.addPerson.bind(_this);
+	        _this.deletePerson = _this.deletePerson.bind(_this);
+	        _this.editPerson = _this.editPerson.bind(_this);
+	        _this.saveEditedPerson = _this.saveEditedPerson.bind(_this);
+	        _this.confirmDelete = _this.confirmDelete.bind(_this);
 	        _this.setSort = _this.setSort.bind(_this);
 	        _this.getData = _this.getData.bind(_this);
 	        _this.isActive = _this.isActive.bind(_this);
@@ -19716,8 +19747,9 @@
 	            currentPage: 0,
 	            data: _dataGenerator2.default,
 	            pageSize: 20,
-	            sortBy: '',
-	            reversed: false
+	            sortBy: 'name',
+	            reversed: false,
+	            editing: {} // store user for editing
 	        };
 	        return _this;
 	    }
@@ -19732,8 +19764,65 @@
 	    }, {
 	        key: 'addPerson',
 	        value: function addPerson(person) {
-	            this.state.data.push(person);
-	            this.setState({ data: this.state.data });
+	            var lastId = this.state.data[this.state.data.length - 1].id;
+	            var arr = this.state.data.slice();
+	            // Make sure the name is properly capitalized before saving
+	            person.name = _utils2.default.formatName(person.name);
+	            // Assign the id of +1 of the id of the last user
+	            person.id = lastId + 1;
+	            arr.push(person);
+	            this.setState({ data: arr });
+	            localStorage.setItem('users', JSON.stringify(this.state.data));
+	        }
+	    }, {
+	        key: 'editPerson',
+	        value: function editPerson(user) {
+	            this.setState({ editing: user });
+	        }
+	    }, {
+	        key: 'saveEditedPerson',
+	        value: function saveEditedPerson(person) {
+	            if (_utils2.default.validateUser(person)) {
+	                this.setState({ editing: {} });
+	                // find the person by id
+	                var p = this.state.data.filter(function (el) {
+	                    return person.id === el.id;
+	                })[0];
+	                if (p) {
+	                    // copy attrs from edited person to the one saved in the state
+	                    for (var key in p) {
+	                        if (p.hasOwnProperty(key)) {
+	                            p[key] = person[key];
+	                        }
+	                    }
+	                    localStorage.setItem('users', JSON.stringify(this.state.data));
+	                }
+	            }
+	        }
+	    }, {
+	        key: 'deletePerson',
+	        value: function deletePerson(id) {
+	            // Loop over users array to find the one to delete
+	            for (var i = 0; i < this.state.data.length; i++) {
+	                // If found remove user from array and update the data accordingly
+	                if (this.state.data[i].id === id) {
+	                    this.state.data.splice(i, 1);
+	                    this.setState({ data: this.state.data });
+	                    localStorage.setItem('users', JSON.stringify(this.state.data));
+	                    return;
+	                }
+	            }
+	        }
+	    }, {
+	        key: 'confirmDelete',
+	        value: function confirmDelete(id) {
+	            var _this2 = this;
+
+	            $('.ui.basic.modal').modal("setting", {
+	                onApprove: function onApprove() {
+	                    _this2.deletePerson(id);
+	                }
+	            }).modal('show');
 	        }
 	    }, {
 	        key: 'isActive',
@@ -19743,12 +19832,12 @@
 	    }, {
 	        key: 'getData',
 	        value: function getData() {
-	            var _this2 = this;
+	            var _this3 = this;
 
 	            var compare = function compare(a, b) {
-	                if (a[_this2.state.sortBy] < b[_this2.state.sortBy]) {
+	                if (a[_this3.state.sortBy] < b[_this3.state.sortBy]) {
 	                    return -1;
-	                } else if (a[_this2.state.sortBy] > b[_this2.state.sortBy]) {
+	                } else if (a[_this3.state.sortBy] > b[_this3.state.sortBy]) {
 	                    return 1;
 	                } else {
 	                    return 0;
@@ -19786,23 +19875,29 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this3 = this;
+	            var _this4 = this;
 
 	            var fields = ['Name', 'Age', 'Gender'];
 	            var headers = fields.map(function (field, i) {
-	                return _react2.default.createElement(Header, { field: field, setSort: _this3.setSort, reversed: _this3.state.reversed,
-	                    sortBy: _this3.state.sortBy, key: i });
+	                return _react2.default.createElement(_Header2.default, { field: field, setSort: _this4.setSort, reversed: _this4.state.reversed,
+	                    sortBy: _this4.state.sortBy, key: i });
 	            });
 	            var rows = this.getData().map(function (person) {
-	                return _react2.default.createElement(PersonRow, { key: person.id, data: person });
+	                if (person.id === _this4.state.editing.id) {
+	                    return _react2.default.createElement(_PersonEditable2.default, { key: person.id, data: person, confirmDelete: _this4.confirmDelete,
+	                        save: _this4.saveEditedPerson });
+	                } else {
+	                    return _react2.default.createElement(_PersonRow2.default, { key: person.id, data: person, confirmDelete: _this4.confirmDelete,
+	                        edit: _this4.editPerson });
+	                }
 	            });
 	            var indents = [];
 
 	            var _loop = function _loop(i) {
 	                indents.push(_react2.default.createElement(
 	                    'a',
-	                    { className: _this3.isActive(i), onClick: function onClick() {
-	                            return _this3.updatePage(i);
+	                    { className: _this4.isActive(i), onClick: function onClick() {
+	                            return _this4.updatePage(i);
 	                        }, key: i },
 	                    i + 1
 	                ));
@@ -19814,7 +19909,13 @@
 	            return _react2.default.createElement(
 	                'div',
 	                null,
+	                _react2.default.createElement(_Modal2.default, null),
 	                _react2.default.createElement(_UserForm2.default, { addPerson: this.addPerson }),
+	                _react2.default.createElement(
+	                    'h4',
+	                    { className: 'ui dividing header' },
+	                    'Users'
+	                ),
 	                _react2.default.createElement(
 	                    'table',
 	                    { className: 'ui celled table' },
@@ -19823,8 +19924,18 @@
 	                        null,
 	                        _react2.default.createElement(
 	                            'tr',
-	                            null,
-	                            headers
+	                            { className: 'seven wide field' },
+	                            headers,
+	                            _react2.default.createElement(
+	                                'th',
+	                                null,
+	                                'Edit'
+	                            ),
+	                            _react2.default.createElement(
+	                                'th',
+	                                null,
+	                                'Delete'
+	                            )
 	                        )
 	                    ),
 	                    _react2.default.createElement(
@@ -19867,150 +19978,10 @@
 	    return App;
 	}(_react2.default.Component);
 
-	var Header = function Header(props) {
-	    return _react2.default.createElement(
-	        'th',
-	        null,
-	        _react2.default.createElement(
-	            'a',
-	            { onClick: function onClick(e) {
-	                    return props.setSort(props.field.toLowerCase());
-	                } },
-	            props.field,
-	            ' ',
-	            _react2.default.createElement(Arrow, _extends({
-	                reversed: props.reversed }, props))
-	        )
-	    );
-	};
-
-	var Arrow = function Arrow(props) {
-	    var el = _react2.default.createElement('span', null); // initialize el to a node, so there is no error when sortBy is not set
-	    if (props.sortBy === props.field.toLowerCase()) {
-	        if (props.reversed) {
-	            el = _react2.default.createElement('i', { className: 'angle double down icon' });
-	        } else {
-	            el = _react2.default.createElement('i', { className: 'angle double up icon' });
-	        }
-	    }
-	    return el;
-	};
-
-	var PersonRow = function PersonRow(props) {
-	    return _react2.default.createElement(
-	        'tr',
-	        null,
-	        _react2.default.createElement(
-	            'td',
-	            null,
-	            props.data.name
-	        ),
-	        _react2.default.createElement(
-	            'td',
-	            null,
-	            props.data.age
-	        ),
-	        _react2.default.createElement(
-	            'td',
-	            null,
-	            props.data.gender
-	        )
-	    );
-	};
-
 	exports.default = App;
 
 /***/ },
 /* 160 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _utils = __webpack_require__(161);
-
-	var _utils2 = _interopRequireDefault(_utils);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	/* Returns a semi-random number between min and max as an integer */
-	function randomRange(min, max) {
-	    return Math.floor(Math.random() * (max - min + 1) + min);
-	}
-
-	/* Returns gender as a string "Male" or "Female" based on the ending of passed in string. For the purposes
-	 * of the predefined data the function checks only for the "a" ending since the data has been formatted
-	 * that only female names end in "a"
-	 */
-	function gender(name) {
-	    name = name.split(' ')[0];
-	    return name[name.length - 1] === 'a' ? 'Female' : 'Male';
-	}
-
-	/* Returns a random name created by combining first and last names from the lists */
-	function randomName() {
-	    var firstNames = ['aaron', 'adam', 'bill', 'bob', 'joe', 'tony', 'ted', 'anna', 'barbara', 'liza', 'maria', 'sanna', 'samira', 'tereza'],
-	        lastNames = ['andrews', 'armstrong', 'baker', 'banks', 'barnes', 'castillo', 'castro', 'fleming', 'grant', 'hudson', 'larson', 'murphy', 'reynolds', 'wayne'],
-	        randomIndex1 = randomRange(0, firstNames.length - 1),
-	        randomIndex2 = randomRange(0, lastNames.length - 1);
-
-	    return firstNames[randomIndex1] + ' ' + lastNames[randomIndex2];
-	}
-
-	function createData() {
-	    var users = [];
-
-	    var _loop = function _loop(i) {
-	        var user = {};
-	        user.id = String(i);
-	        user.name = _utils2.default.formatName(randomName());
-	        user.age = randomRange(18, 100);
-	        var alreadyExists = users.filter(function (el) {
-	            return el.name === user.name;
-	        });
-	        if (alreadyExists.length) {
-	            user.name = '';
-	            user.name = _utils2.default.formatName(randomName());
-	        }
-	        user.gender = gender(user.name);
-	        users.push(user);
-	    };
-
-	    for (var i = 0; i < 100; i++) {
-	        _loop(i);
-	    }
-	    return users;
-	}
-
-	exports.default = createData();
-
-/***/ },
-/* 161 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var utils = {
-	    // Accepts a name as a string and capitalizes first letters in every word. Returns formatted name as a string
-	    formatName: function formatName(name) {
-	        var names = name.split(' ');
-	        var fullName = names.map(function (el) {
-	            return el[0].toUpperCase() + el.slice(1);
-	        });
-	        return fullName.join(' ');
-	    }
-	};
-
-	exports.default = utils;
-
-/***/ },
-/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20025,7 +19996,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(163);
+	var _classnames = __webpack_require__(161);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -20084,7 +20055,7 @@
 	                        identifier: 'name',
 	                        rules: [{
 	                            type: 'empty',
-	                            prompt: 'Please enter your name'
+	                            prompt: 'Please enter name'
 	                        }, {
 	                            type: 'minLength[3]',
 	                            prompt: 'Name should be at least 3 characters long'
@@ -20229,7 +20200,7 @@
 	exports.default = Form;
 
 /***/ },
-/* 163 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -20283,7 +20254,448 @@
 
 
 /***/ },
+/* 162 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Arrow = __webpack_require__(163);
+
+	var _Arrow2 = _interopRequireDefault(_Arrow);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Header = function Header(props) {
+	    return _react2.default.createElement(
+	        'th',
+	        null,
+	        _react2.default.createElement(
+	            'a',
+	            { onClick: function onClick(e) {
+	                    return props.setSort(props.field.toLowerCase());
+	                } },
+	            props.field,
+	            ' ',
+	            _react2.default.createElement(_Arrow2.default, _extends({
+	                reversed: props.reversed }, props))
+	        )
+	    );
+	};
+
+	exports.default = Header;
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Arrow = function Arrow(props) {
+	    var el = _react2.default.createElement('span', null); // initialize el to a node, so there is no error when sortBy is not set
+	    if (props.sortBy === props.field.toLowerCase()) {
+	        if (props.reversed) {
+	            el = _react2.default.createElement('i', { className: 'angle double down icon' });
+	        } else {
+	            el = _react2.default.createElement('i', { className: 'angle double up icon' });
+	        }
+	    }
+	    return el;
+	};
+
+	exports.default = Arrow;
+
+/***/ },
 /* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Modal = function Modal() {
+	    return _react2.default.createElement(
+	        'div',
+	        { className: 'ui basic modal' },
+	        _react2.default.createElement('i', { className: 'close icon' }),
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'header' },
+	            'Delete person?'
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'image content' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'image' },
+	                _react2.default.createElement('i', { className: 'archive icon' })
+	            ),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'description' },
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Are you sure you want to delete this person?'
+	                )
+	            )
+	        ),
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'actions' },
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'two fluid ui inverted buttons cancel' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'ui red basic inverted button' },
+	                    _react2.default.createElement('i', { className: 'remove icon' }),
+	                    'Cancel'
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'ui green basic inverted button ok' },
+	                    _react2.default.createElement('i', { className: 'checkmark icon' }),
+	                    'Delete'
+	                )
+	            )
+	        )
+	    );
+	};
+
+	exports.default = Modal;
+
+/***/ },
+/* 165 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var PersonEditable = function (_React$Component) {
+	    _inherits(PersonEditable, _React$Component);
+
+	    function PersonEditable(props) {
+	        _classCallCheck(this, PersonEditable);
+
+	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PersonEditable).call(this, props));
+
+	        _this.state = {
+	            name: props.data.name,
+	            gender: props.data.gender,
+	            age: props.data.age,
+	            data: props.data
+	        };
+	        return _this;
+	    }
+
+	    _createClass(PersonEditable, [{
+	        key: 'onNameChange',
+	        value: function onNameChange(e) {
+	            this.setState({
+	                name: e.target.value
+	            });
+	        }
+	    }, {
+	        key: 'onAgeChange',
+	        value: function onAgeChange(e) {
+	            this.setState({
+	                age: e.target.value
+	            });
+	        }
+	    }, {
+	        key: 'onGenderChange',
+	        value: function onGenderChange(e) {
+	            this.setState({
+	                gender: e.target.value
+	            });
+	        }
+	    }, {
+	        key: 'handleSubmit',
+	        value: function handleSubmit(e) {
+	            e.preventDefault();
+	            this.props.addPerson(this.state);
+	            this.setState({ name: '', gender: '', age: '' });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            return _react2.default.createElement(
+	                'tr',
+	                null,
+	                _react2.default.createElement(
+	                    'td',
+	                    { className: 'four wide field ui input' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'ui input' },
+	                        _react2.default.createElement('input', { type: 'text', name: 'name', placeholder: 'Name', value: this.state.name,
+	                            onChange: this.onNameChange.bind(this) })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'td',
+	                    { className: 'two wide field' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'ui input' },
+	                        _react2.default.createElement('input', { type: 'number', name: 'age', min: '13', max: '100', placeholder: 'Age',
+	                            value: this.state.age,
+	                            onChange: this.onAgeChange.bind(this) })
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'td',
+	                    { className: 'three wide field' },
+	                    _react2.default.createElement(
+	                        'select',
+	                        { className: 'ui compact selection dropdown', name: 'gender', value: this.state.gender,
+	                            onChange: this.onGenderChange.bind(this) },
+	                        _react2.default.createElement(
+	                            'option',
+	                            { value: 'Male' },
+	                            'Male'
+	                        ),
+	                        _react2.default.createElement(
+	                            'option',
+	                            { value: 'Female' },
+	                            'Female'
+	                        )
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    'td',
+	                    { className: 'one wide field' },
+	                    _react2.default.createElement('i', {
+	                        onClick: function onClick() {
+	                            return _this2.props.save({ id: _this2.props.data.id, name: _this2.state.name, age: _this2.state.age, gender: _this2.state.gender });
+	                        },
+	                        className: 'save icon' })
+	                ),
+	                _react2.default.createElement(
+	                    'td',
+	                    { className: 'one wide field' },
+	                    _react2.default.createElement('i', { onClick: function onClick() {
+	                            return _this2.props.confirmDelete(_this2.props.data.id);
+	                        },
+	                        className: 'remove icon' })
+	                )
+	            );
+	        }
+	    }]);
+
+	    return PersonEditable;
+	}(_react2.default.Component);
+
+	exports.default = PersonEditable;
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var PersonRow = function PersonRow(props) {
+	    return _react2.default.createElement(
+	        'tr',
+	        null,
+	        _react2.default.createElement(
+	            'td',
+	            { className: 'four wide field' },
+	            props.data.name
+	        ),
+	        _react2.default.createElement(
+	            'td',
+	            { className: 'two wide field' },
+	            props.data.age
+	        ),
+	        _react2.default.createElement(
+	            'td',
+	            { className: 'three wide field' },
+	            props.data.gender
+	        ),
+	        _react2.default.createElement(
+	            'td',
+	            { className: 'one wide field' },
+	            _react2.default.createElement('i', { onClick: function onClick() {
+	                    return props.edit(props.data);
+	                }, className: 'write icon' })
+	        ),
+	        _react2.default.createElement(
+	            'td',
+	            { className: 'one wide field' },
+	            _react2.default.createElement('i', { onClick: function onClick() {
+	                    return props.confirmDelete(props.data.id);
+	                }, className: 'remove icon' })
+	        )
+	    );
+	};
+
+	exports.default = PersonRow;
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _utils = __webpack_require__(168);
+
+	var _utils2 = _interopRequireDefault(_utils);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/* Returns a semi-random number between min and max as an integer */
+	function randomRange(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1) + min);
+	}
+
+	/* Returns gender as a string "Male" or "Female" based on the ending of passed in string. For the purposes
+	 * of the predefined data the function checks only for the "a" ending since the data has been formatted
+	 * that only female names end in "a"
+	 */
+	function gender(name) {
+	    name = name.split(' ')[0];
+	    return name[name.length - 1] === 'a' ? 'Female' : 'Male';
+	}
+
+	/* Returns a random name created by combining first and last names from the lists */
+	function randomName() {
+	    var firstNames = ['aaron', 'adam', 'bill', 'bob', 'joe', 'tony', 'ted', 'anna', 'barbara', 'liza', 'maria', 'sanna', 'samira', 'tereza'],
+	        lastNames = ['andrews', 'armstrong', 'baker', 'banks', 'barnes', 'castillo', 'castro', 'fleming', 'grant', 'hudson', 'larson', 'murphy', 'reynolds', 'wayne'],
+	        randomIndex1 = randomRange(0, firstNames.length - 1),
+	        randomIndex2 = randomRange(0, lastNames.length - 1);
+
+	    return firstNames[randomIndex1] + ' ' + lastNames[randomIndex2];
+	}
+
+	function createData() {
+	    if (!localStorage.getItem('users')) {
+
+	        var users = [];
+
+	        var _loop = function _loop(i) {
+	            var user = {};
+	            user.id = i;
+	            user.name = _utils2.default.formatName(randomName());
+	            user.age = randomRange(18, 100);
+	            var alreadyExists = users.filter(function (el) {
+	                return el.name === user.name;
+	            });
+	            if (alreadyExists.length) {
+	                user.name = '';
+	                user.name = _utils2.default.formatName(randomName());
+	            }
+	            user.gender = gender(user.name);
+	            users.push(user);
+	        };
+
+	        for (var i = 0; i < 100; i++) {
+	            _loop(i);
+	        }
+	        localStorage.setItem('users', JSON.stringify(users));
+	    }
+	    return JSON.parse(localStorage.getItem('users'));
+	}
+
+	exports.default = createData();
+
+/***/ },
+/* 168 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var utils = {
+	    // Accepts a name as a string and capitalizes first letters in every word. Returns formatted name as a string
+	    formatName: function formatName(name) {
+	        var names = name.split(' ');
+	        var fullName = names.map(function (el) {
+	            return el[0].toUpperCase() + el.slice(1);
+	        });
+	        return fullName.join(' ');
+	    },
+
+	    validateUser: function validateUser(user) {
+	        var valid = true;
+	        // Iterate over user's keys and ensure that all of them are valid
+	        Object.keys(user).forEach(function (key) {
+	            if (!user[key] || key === 'name' && user[key].length < 3 || key === 'age' && (user[key] < 0 || user[key] > 100)) {
+	                valid = false;
+	            }
+	        });
+	        return valid;
+	    }
+	};
+
+	exports.default = utils;
+
+/***/ },
+/* 169 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
