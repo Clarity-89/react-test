@@ -147,6 +147,7 @@ class App extends React.Component {
         return (<div>
             <Modal />
             <Form addPerson={this.addPerson}/>
+            <h4 className="ui dividing header">Users</h4>
             <table className="ui celled table">
                 <thead>
                 <tr className="seven wide field">
@@ -176,4 +177,4 @@ class App extends React.Component {
     }
 }
 
-export default App
+export default App;
