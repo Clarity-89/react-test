@@ -24,6 +24,7 @@ class App extends React.Component {
         this.addPerson = this.addPerson.bind(this);
         this.deletePerson = this.deletePerson.bind(this);
         this.editPerson = this.editPerson.bind(this);
+        this.saveEditedPerson = this.saveEditedPerson.bind(this);
         this.confirmDelete = this.confirmDelete.bind(this);
         this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
@@ -54,6 +55,25 @@ class App extends React.Component {
         arr.push(person);
         this.setState({data: arr});
         localStorage.setItem('users', JSON.stringify(this.state.data));
+    }
+
+    editPerson(user) {
+        this.setState({editing: user})
+    }
+
+    saveEditedPerson(person) {
+        if (utils.validateUser(person)) {
+            this.setState({editing: {}});
+            let p = this.state.data.filter(el => person.id === el.id)[0];
+            if (p) {
+                for (let key in p) {
+                    if (p.hasOwnProperty(key)) {
+                        p[key] = person[key];
+                    }
+                }
+                localStorage.setItem('users', JSON.stringify(this.state.data));
+            }
+        }
     }
 
     deletePerson(id) {
@@ -121,10 +141,6 @@ class App extends React.Component {
         this.setState({sortBy: prop, reversed: !this.state.reversed})
     }
 
-    editPerson(user) {
-        this.setState({editing: user})
-    }
-
     render() {
         let fields = ['Name', 'Age', 'Gender'];
         let headers = fields.map((field, i)=> {
@@ -134,7 +150,7 @@ class App extends React.Component {
         let rows = this.getData().map(person => {
             if (person.id === this.state.editing.id) {
                 return <PersonEditable key={person.id} data={person} confirmDelete={this.confirmDelete}
-                />
+                                       save={this.saveEditedPerson}/>
             } else {
                 return <PersonRow key={person.id} data={person} confirmDelete={this.confirmDelete}
                                   edit={this.editPerson}/>

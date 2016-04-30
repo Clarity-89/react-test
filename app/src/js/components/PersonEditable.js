@@ -49,12 +49,14 @@ class PersonEditable extends React.Component {
                                                      onChange={this.onAgeChange.bind(this)}/></div>
                 </td>
                 <td className="three wide field">
-                    <select className="ui compact selection dropdown" name="gender" value={this.state.gender} onChange={this.onGenderChange.bind(this)}>
+                    <select className="ui compact selection dropdown" name="gender" value={this.state.gender}
+                            onChange={this.onGenderChange.bind(this)}>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                     </select></td>
-                <td className="one wide field"><i onClick={()=>this.props.savePerson(this.props.data)}
-                                                  className="save icon"></i></td>
+                <td className="one wide field"><i
+                    onClick={()=>this.props.save({id: this.props.data.id, name:this.state.name, age: this.state.age, gender: this.state.gender})}
+                    className="save icon"></i></td>
                 <td className="one wide field"><i onClick={()=>this.props.confirmDelete(this.props.data.id)}
                                                   className="remove icon"></i>
                 </td>
