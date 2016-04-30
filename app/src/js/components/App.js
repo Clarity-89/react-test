@@ -1,10 +1,20 @@
 'use strict';
 
+// React core 
 import React from 'react';
-import users from './../data-generator'
-import Form from './UserForm'
-import PersonEditable from './PersonEditable'
-import utils from './../utils'
+
+// Components 
+import Form from './UserForm';
+import Header from './Header';
+import Modal from './Modal';
+import PersonEditable from './PersonEditable';
+import PersonRow from './PersonRow';
+
+// Utilities and helpers
+import users from './../data-generator';
+import utils from './../utils';
+
+// Styles
 require('../../scss/style.scss');
 
 class App extends React.Component {
