@@ -20,7 +20,7 @@ class App extends React.Component {
             currentPage: 0,
             data: users,
             pageSize: 20,
-            sortBy: '',
+            sortBy: 'name',
             reversed: false,
             editing: {} // store user for editing
         };
