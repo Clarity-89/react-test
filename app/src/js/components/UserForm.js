@@ -1,3 +1,5 @@
+'use strict';
+
 import React from 'react';
 import classnames from 'classnames';
 
@@ -38,7 +40,7 @@ class Form extends React.Component {
                     rules: [
                         {
                             type: 'empty',
-                            prompt: 'Please enter your name'
+                            prompt: 'Please enter name'
                         },
                         {
                             type: 'minLength[3]',

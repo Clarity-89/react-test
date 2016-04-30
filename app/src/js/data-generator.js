@@ -1,3 +1,5 @@
+'use strict';
+
 import utils from './utils';
 
 /* Returns a semi-random number between min and max as an integer */
@@ -27,22 +29,26 @@ function randomName() {
 }
 
 function createData() {
-    var users = [];
+    if (!localStorage.getItem('users')) {
 
-    for (let i = 0; i < 100; i++) {
-        let user = {};
-        user.id = String(i);
-        user.name = utils.formatName(randomName());
-        user.age = randomRange(18, 100);
-        let alreadyExists = users.filter(el => el.name === user.name);
-        if (alreadyExists.length) {
-            user.name = '';
+        var users = [];
+
+        for (let i = 0; i < 100; i++) {
+            let user = {};
+            user.id = i;
             user.name = utils.formatName(randomName());
+            user.age = randomRange(18, 100);
+            let alreadyExists = users.filter(el => el.name === user.name);
+            if (alreadyExists.length) {
+                user.name = '';
+                user.name = utils.formatName(randomName());
+            }
+            user.gender = gender(user.name);
+            users.push(user);
         }
-        user.gender = gender(user.name);
-        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
     }
-    return users;
+    return JSON.parse(localStorage.getItem('users'));
 }
 
 export default createData()

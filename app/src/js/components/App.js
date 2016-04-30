@@ -1,6 +1,20 @@
+'use strict';
+
+// React core 
 import React from 'react';
-import users from './../data-generator'
-import Form from './UserForm'
+
+// Components 
+import Form from './UserForm';
+import Header from './Header';
+import Modal from './Modal';
+import PersonEditable from './PersonEditable';
+import PersonRow from './PersonRow';
+
+// Utilities and helpers
+import users from './../data-generator';
+import utils from './../utils';
+
+// Styles
 require('../../scss/style.scss');
 
 class App extends React.Component {
@@ -8,6 +22,10 @@ class App extends React.Component {
         super(props);
         this.updatePage = this.updatePage.bind(this);
         this.addPerson = this.addPerson.bind(this);
+        this.deletePerson = this.deletePerson.bind(this);
+        this.editPerson = this.editPerson.bind(this);
+        this.saveEditedPerson = this.saveEditedPerson.bind(this);
+        this.confirmDelete = this.confirmDelete.bind(this);
         this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
@@ -15,8 +33,9 @@ class App extends React.Component {
             currentPage: 0,
             data: users,
             pageSize: 20,
-            sortBy: '',
-            reversed: false
+            sortBy: 'name',
+            reversed: false,
+            editing: {} // store user for editing
         };
     }
 
@@ -27,8 +46,59 @@ class App extends React.Component {
     }
 
     addPerson(person) {
-        this.state.data.push(person);
-        this.setState({data: this.state.data});
+        let lastId = this.state.data[this.state.data.length - 1].id;
+        let arr = this.state.data.slice();
+        // Make sure the name is properly capitalized before saving
+        person.name = utils.formatName(person.name);
+        // Assign the id of +1 of the id of the last user
+        person.id = lastId + 1;
+        arr.push(person);
+        this.setState({data: arr});
+        localStorage.setItem('users', JSON.stringify(this.state.data));
+    }
+
+    editPerson(user) {
+        this.setState({editing: user})
+    }
+
+    saveEditedPerson(person) {
+        if (utils.validateUser(person)) {
+            this.setState({editing: {}});
+            // find the person by id
+            let p = this.state.data.filter(el => person.id === el.id)[0];
+            if (p) {
+                // copy attrs from edited person to the one saved in the state
+                for (let key in p) {
+                    if (p.hasOwnProperty(key)) {
+                        p[key] = person[key];
+                    }
+                }
+                localStorage.setItem('users', JSON.stringify(this.state.data));
+            }
+        }
+    }
+
+    deletePerson(id) {
+        // Loop over users array to find the one to delete
+        for (let i = 0; i < this.state.data.length; i++) {
+            // If found remove user from array and update the data accordingly
+            if (this.state.data[i].id === id) {
+                this.state.data.splice(i, 1);
+                this.setState({data: this.state.data});
+                localStorage.setItem('users', JSON.stringify(this.state.data));
+                return;
+            }
+        }
+    }
+
+    confirmDelete(id) {
+        $('.ui.basic.modal')
+            .modal("setting", {
+                onApprove: () => {
+                    this.deletePerson(id);
+                }
+            })
+            .modal('show');
     }
 
     isActive(value) {
@@ -80,17 +150,29 @@ class App extends React.Component {
                            sortBy={this.state.sortBy} key={i}/>
         });
         let rows = this.getData().map(person => {
-            return <PersonRow key={person.id} data={person}/>
+            if (person.id === this.state.editing.id) {
+                return <PersonEditable key={person.id} data={person} confirmDelete={this.confirmDelete}
+                                       save={this.saveEditedPerson}/>
+            } else {
+                return <PersonRow key={person.id} data={person} confirmDelete={this.confirmDelete}
+                                  edit={this.editPerson}/>
+            }
         });
         let indents = [];
         for (let i = 0; i < Math.ceil(this.state.data.length / this.state.pageSize); i++) {
             indents.push(<a className={this.isActive(i)} onClick={() => this.updatePage(i)} key={i}>{i + 1}</a>);
         }
         return (<div>
+            <Modal />
             <Form addPerson={this.addPerson}/>
+            <h4 className="ui dividing header">Users</h4>
             <table className="ui celled table">
                 <thead>
-                <tr>{headers}</tr>
+                <tr className="seven wide field">
+                    {headers}
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
                 </thead>
                 <tbody>{rows}</tbody>
                 <tfoot>
@@ -112,30 +194,5 @@ class App extends React.Component {
         </div>);
     }
 }
-const Header = (props) => {
-    return (<th><a onClick={(e)=>props.setSort(props.field.toLowerCase())}>{props.field} <Arrow
-        reversed={props.reversed} {...props} /></a>
-    </th>)
-};
 
-const Arrow = (props) => {
-    var el = <span></span>; // initialize el to a node, so there is no error when sortBy is not set
-    if (props.sortBy === props.field.toLowerCase()) {
-        if (props.reversed) {
-            el = <i className="angle double down icon"></i>
-        } else {
-            el = <i className="angle double up icon"></i>
-        }
-    }
-    return el;
-};
-
-const PersonRow = (props) => {
-    return (<tr>
-        <td>{props.data.name}</td>
-        <td>{props.data.age}</td>
-        <td>{props.data.gender}</td>
-    </tr>)
-};
-
-export default App
+export default App;
