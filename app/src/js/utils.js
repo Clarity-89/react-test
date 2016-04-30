@@ -7,7 +7,7 @@ const utils = {
         let fullName = names.map(el => el[0].toUpperCase() + el.slice(1));
         return fullName.join(' ');
     },
-
+    // Make sure empty fields cannot be saved upon editing plus add some basic validation for name and age fields
     validateUser: function (user) {
         let valid = true;
         // Iterate over user's keys and ensure that all of them are valid
@@ -20,4 +20,4 @@ const utils = {
     }
 };
 
-export default utils
+export default utils;
