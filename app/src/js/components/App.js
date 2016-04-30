@@ -64,8 +64,10 @@ class App extends React.Component {
     saveEditedPerson(person) {
         if (utils.validateUser(person)) {
             this.setState({editing: {}});
+            // find the person by id
             let p = this.state.data.filter(el => person.id === el.id)[0];
             if (p) {
+                // copy attrs from edited person to the one saved in the state
                 for (let key in p) {
                     if (p.hasOwnProperty(key)) {
                         p[key] = person[key];

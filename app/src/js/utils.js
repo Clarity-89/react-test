@@ -12,13 +12,12 @@ const utils = {
         let valid = true;
         // Iterate over user's keys and ensure that all of them are valid
         Object.keys(user).forEach(key => {
-            if (!user[key] || (key === 'name' && user[key].length < 3)) {
+            if (!user[key] || (key === 'name' && user[key].length < 3) || (key === 'age' && (user[key] < 0 || user[key] > 100))) {
                 valid = false;
             }
         });
         return valid;
     }
 };
-
 
 export default utils
