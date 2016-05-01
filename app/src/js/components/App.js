@@ -29,6 +29,7 @@ class App extends React.Component {
         this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
+        this.cancel = this.cancel.bind(this);
         this.state = {
             currentPage: 0,
             data: users,
@@ -37,6 +38,14 @@ class App extends React.Component {
             reversed: false,
             editing: {} // store user for editing
         };
+    }
+
+    componentDidMount(ev) {
+        document.body.addEventListener('click', this.reset);
+    }
+
+    componentWillUnmount() {
+        document.body.removeEventListener('click', this.reset);
     }
 
     updatePage(num) {
@@ -58,6 +67,7 @@ class App extends React.Component {
     }
 
     editPerson(user) {
+        event.stopPropagation();
         this.setState({editing: user})
     }
 
@@ -99,6 +109,10 @@ class App extends React.Component {
                 }
             })
             .modal('show');
+    }
+
+    cancel() {
+        this.setState({editing: {}});
     }
 
     isActive(value) {
@@ -151,7 +165,7 @@ class App extends React.Component {
         });
         let rows = this.getData().map(person => {
             if (person.id === this.state.editing.id) {
-                return <PersonEditable key={person.id} data={person} confirmDelete={this.confirmDelete}
+                return <PersonEditable key={person.id} data={person} cancel={this.cancel}
                                        save={this.saveEditedPerson}/>
             } else {
                 return <PersonRow key={person.id} data={person} confirmDelete={this.confirmDelete}

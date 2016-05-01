@@ -57,7 +57,7 @@ class PersonEditable extends React.Component {
                 <td className="one wide field"><i
                     onClick={()=>this.props.save({id: this.props.data.id, name:this.state.name, age: this.state.age, gender: this.state.gender})}
                     className="save icon"></i></td>
-                <td className="one wide field"><i onClick={()=>this.props.confirmDelete(this.props.data.id)}
+                <td className="one wide field"><i onClick={()=>this.props.cancel()}
                                                   className="remove icon"></i>
                 </td>
             </tr>
