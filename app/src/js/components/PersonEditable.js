@@ -39,30 +39,28 @@ class PersonEditable extends React.Component {
 
     render() {
         return (<tr>
-                <td className="four wide field ui input">
-                    <div className="ui input"><input type="text" name="name" placeholder="Name" value={this.state.name}
-                                                     onChange={this.onNameChange.bind(this)}/></div>
-                </td>
-                <td className="two wide field">
-                    <div className="ui input"><input type="number" name="age" min="13" max="100" placeholder="Age"
-                                                     value={this.state.age}
-                                                     onChange={this.onAgeChange.bind(this)}/></div>
-                </td>
-                <td className="three wide field">
-                    <select className="ui compact selection dropdown" name="gender" value={this.state.gender}
-                            onChange={this.onGenderChange.bind(this)}>
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                    </select></td>
-                <td className="one wide field"><i
-                    onClick={()=>this.props.save({id: this.props.data.id, name:this.state.name, age: this.state.age, gender: this.state.gender})}
-                    className="save icon"></i></td>
-                <td className="one wide field"><i onClick={()=>this.props.cancel()}
-                                                  className="remove icon"></i>
-                </td>
-            </tr>
-
-        )
+            <td className="four wide field ui input">
+                <div className="ui input"><input type="text" name="name" placeholder="Name" value={this.state.name}
+                                                 onChange={this.onNameChange.bind(this)}/></div>
+            </td>
+            <td className="two wide field">
+                <div className="ui input"><input type="number" name="age" min="13" max="100" placeholder="Age"
+                                                 value={this.state.age}
+                                                 onChange={this.onAgeChange.bind(this)}/></div>
+            </td>
+            <td className="three wide field">
+                <select className="ui compact selection dropdown" name="gender" value={this.state.gender}
+                        onChange={this.onGenderChange.bind(this)}>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select></td>
+            <td className="one wide field"><i
+                onClick={()=>this.props.save({id: this.props.data.id, name:this.state.name, age: this.state.age, gender: this.state.gender})}
+                className="save icon"></i></td>
+            <td className="one wide field"><i onClick={()=>this.props.cancel()}
+                                              className="remove icon"></i>
+            </td>
+        </tr>)
     }
 }
 

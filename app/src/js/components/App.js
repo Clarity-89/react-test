@@ -176,8 +176,8 @@ class App extends React.Component {
                 <thead>
                 <tr className="seven wide field">
                     {headers}
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>{rows}</tbody>
