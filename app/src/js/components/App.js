@@ -40,14 +40,6 @@ class App extends React.Component {
         };
     }
 
-    componentDidMount(ev) {
-        document.body.addEventListener('click', this.reset);
-    }
-
-    componentWillUnmount() {
-        document.body.removeEventListener('click', this.reset);
-    }
-
     updatePage(num) {
         this.setState({
             currentPage: num

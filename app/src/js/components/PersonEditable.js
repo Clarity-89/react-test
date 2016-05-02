@@ -66,5 +66,4 @@ class PersonEditable extends React.Component {
     }
 }
 
-
 export default PersonEditable;
