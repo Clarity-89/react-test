@@ -183,7 +183,7 @@ class App extends React.Component {
                 <tbody>{rows}</tbody>
                 <tfoot>
                 <tr>
-                    <th colSpan="3">
+                    <th colSpan="5">
                         <div className="ui right floated pagination menu">
                             <a className="icon item" onClick={this.pageBack.bind(this)}>
                                 <i className="left chevron icon"></i>
