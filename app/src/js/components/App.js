@@ -29,6 +29,7 @@ class App extends React.Component {
         this.setSort = this.setSort.bind(this);
         this.getData = this.getData.bind(this);
         this.isActive = this.isActive.bind(this);
+        this.cancel = this.cancel.bind(this);
         this.state = {
             currentPage: 0,
             data: users,
@@ -58,6 +59,7 @@ class App extends React.Component {
     }
 
     editPerson(user) {
+        event.stopPropagation();
         this.setState({editing: user})
     }
 
@@ -99,6 +101,10 @@ class App extends React.Component {
                 }
             })
             .modal('show');
+    }
+
+    cancel() {
+        this.setState({editing: {}});
     }
 
     isActive(value) {
@@ -151,7 +157,7 @@ class App extends React.Component {
         });
         let rows = this.getData().map(person => {
             if (person.id === this.state.editing.id) {
-                return <PersonEditable key={person.id} data={person} confirmDelete={this.confirmDelete}
+                return <PersonEditable key={person.id} data={person} cancel={this.cancel}
                                        save={this.saveEditedPerson}/>
             } else {
                 return <PersonRow key={person.id} data={person} confirmDelete={this.confirmDelete}
@@ -170,14 +176,14 @@ class App extends React.Component {
                 <thead>
                 <tr className="seven wide field">
                     {headers}
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>{rows}</tbody>
                 <tfoot>
                 <tr>
-                    <th colSpan="3">
+                    <th colSpan="5">
                         <div className="ui right floated pagination menu">
                             <a className="icon item" onClick={this.pageBack.bind(this)}>
                                 <i className="left chevron icon"></i>
