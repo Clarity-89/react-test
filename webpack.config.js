@@ -1,8 +1,8 @@
-//const webpack = require('webpack');
+const webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
-    entry:  './app/src/js/main.js',
-        output: {
+    entry: './app/src/js/main.js',
+    output: {
         path: './app/dist',
         filename: 'index.js'
     },
@@ -10,16 +10,20 @@ module.exports = {
         inline: true,
         port: 3333
     },
-    /* For production
-     plugins: [
-     new webpack.optimize.DedupePlugin(),
-     new webpack.optimize.UglifyJsPlugin({
-     minimize: true,
-     compress: {
-     warnings: false
-     }
-     })
-     ],*/
+
+    plugins: [
+        /* For production
+         new webpack.optimize.DedupePlugin(),
+         new webpack.optimize.UglifyJsPlugin({
+         minimize: true,
+         compress: {
+         warnings: false
+         }
+         }),*/
+        new ExtractTextPlugin('style.css', {
+            allChunks: true
+        })
+    ],
     module: {
         loaders: [
             {
@@ -35,10 +39,5 @@ module.exports = {
                 loader: ExtractTextPlugin.extract('css!sass')
             }
         ]
-    },
-    plugins: [
-        new ExtractTextPlugin('style.css', {
-            allChunks: true
-        })
-    ]
+    }
 };
